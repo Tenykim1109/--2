@@ -22,4 +22,8 @@
 
     </application>
 
+    <!-- sdk 29버전 이상은 background_location 사용 -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
 </manifest>
