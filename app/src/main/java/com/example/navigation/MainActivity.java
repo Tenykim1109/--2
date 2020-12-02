@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //selectDoc();//search the DB info
 
+        compare_beacon("UUID1");//통신 성공한 비콘과 DB 내 비콘 정보 비교
+
         tts = new TextToSpeech(this, new android.speech.tts.TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status){
@@ -50,18 +52,36 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void Click(View v){// 비콘 수신 기능 개발 전 다음 페이지로 넘어가기 위한 버튼 (Activity 이동)
-        Intent intent = new Intent(MainActivity.this,select_destination.class);
-        intent.putExtra("beacon_name","beacon_name1");//beacon_name 넘겨주기 (string name, UUID)
-
         //비콘 수신 기능 구현 시 사용
         String speak = "안녕하세요";
         tts.setPitch(1.5f);//tone
         tts.setSpeechRate(1.0f);//speed
         tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null);//speech
-
-
-        startActivity(intent);//select_destination 페이지로 이동
     }
+
+    private void compare_beacon(String UUID){//통신 비콘과 DB 비콘 비교 메소드
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Beacon")
+                .whereEqualTo("UUID",UUID)//UUID1대신 실제 통신한 beacon UUID 입력하여 DB UUID 목록과 비교
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for (QueryDocumentSnapshot document : task.getResult()){
+                                beacon_uuid uuid = document.toObject(beacon_uuid.class);
+                                Log.d("beacon"," => " + uuid.getUUID());//print current beacon UUID
+
+                                //비교 완료한 비콘에 대한 목적지 안내 페이지로 이동 (+해당 비콘의 UUID정보와 함께)
+                                Intent intent = new Intent(MainActivity.this,select_destination.class);
+                                intent.putExtra("beacon_uuid",uuid.getUUID());//beacon_name 넘겨주기 (string name, UUID)
+                                startActivity(intent);//select_destination 페이지로 이동
+                            }
+                        }
+                    }
+                });
+    }
+
 
     /*private void selectDoc(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();//make the firestore instance
@@ -82,8 +102,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
         db.collection("beacon").document("beacon_name1").collection("route")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -101,4 +119,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }*/
+}
+class beacon_uuid{//DB 비콘 정보 클래스_UUID1 document
+    private String UUID;
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
+    public String getUUID() {
+        return UUID;
+    }
 }
