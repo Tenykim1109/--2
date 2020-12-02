@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     TextToSpeech tts;//음성출력 객체
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.DONUT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //selectDoc();//search the DB info
 
-        compare_beacon("UUID1");//통신 성공한 비콘과 DB 내 비콘 정보 비교
+        compare_beacon("44604");//통신 성공한 비콘과 DB 내 비콘 정보 비교
 
         tts = new TextToSpeech(this, new android.speech.tts.TextToSpeech.OnInitListener() {
             @Override
@@ -69,12 +68,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
                             for (QueryDocumentSnapshot document : task.getResult()){
-                                beacon_uuid uuid = document.toObject(beacon_uuid.class);
-                                Log.d("beacon"," => " + uuid.getUUID());//print current beacon UUID
+                                //beacon_uuid uuid = document.toObject(beacon_uuid.class);
+                                Log.d("beacon"," => " + document.getId());//print current beacon UUID
 
                                 //비교 완료한 비콘에 대한 목적지 안내 페이지로 이동 (+해당 비콘의 UUID정보와 함께)
                                 Intent intent = new Intent(MainActivity.this,select_destination.class);
-                                intent.putExtra("beacon_uuid",uuid.getUUID());//beacon_name 넘겨주기 (string name, UUID)
+                                //intent.putExtra("beacon_uuid",uuid.getUUID());//beacon_name 넘겨주기 (string name, UUID)
+                                intent.putExtra("beacon_uuid",document.getId());
                                 startActivity(intent);//select_destination 페이지로 이동
                             }
                         }

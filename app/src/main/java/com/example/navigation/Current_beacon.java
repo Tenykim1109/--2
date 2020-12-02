@@ -1,11 +1,12 @@
 package com.example.navigation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Current_beacon {//DB 비콘 정보 클래스_Route document
+public class Current_beacon implements Serializable {//DB 비콘 정보 클래스_Route document
     private ArrayList<String> inter_path = new ArrayList<String>();
     private String dest_name;
     private Map<String,String> navigation = new HashMap<>();
