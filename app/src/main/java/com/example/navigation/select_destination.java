@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class select_destination extends AppCompatActivity {
-    //Current_beacon [] beacon = new Current_beacon[20];//목적지 목록 저장 객체 배열
     ArrayList<Current_beacon> beacon = new ArrayList<Current_beacon>();
     ArrayList<String> destination = new ArrayList<String>();//목적지 목록 배열_listview adapter 연결용
     int count =0;
@@ -72,13 +71,13 @@ public class select_destination extends AppCompatActivity {
                                     adapter.notifyDataSetChanged();//update the adapter
                                 }
                             }
-                            else Log.d("beacon","Error getting documnets: " + task.getException());
-
-                            //String speak = beacon[0].getVoice("UUID2");
-                            //tts.setPitch(1.5f);//tone
-                            //tts.setSpeechRate(1.0f);//speed
-                            //tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null);//speech
-                        }
+                            else {
+                                Log.d("beacon", "Error getting documnets: " + task.getException());
+/*                            String speak = beacon[0].getVoice("UUID2");
+                            tts.setPitch(1.5f);//tone
+                            tts.setSpeechRate(1.0f);//speed
+                            tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null);//speech*/
+                            }                    
                     });
 
 
@@ -91,9 +90,12 @@ public class select_destination extends AppCompatActivity {
                             String destination = String.valueOf(parent.getItemAtPosition(i));
                             int obj = 1;
                             for(int j=0; j<beacon.size();j++){
-                                if(beacon.get(j).getDest_name() == destination)
+
+                                if (beacon.get(j).getDest_name() == destination)
                                     obj = j;
                             }
+
+                            
                             Intent intent = new Intent(select_destination.this,load_navigation.class);//목적지 선택 시 arrival_info로 이동
                             //intent.putExtra("doc_route",destination);//목적지
                             intent.putExtra("beacon_obj",beacon.get(obj));
@@ -107,46 +109,8 @@ public class select_destination extends AppCompatActivity {
 
     }
 
-    /*private void list_dest( String beacon_name ){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();//make the firestore instance
-
-        DocumentReference docRef = db.collection("beacon").document("beacon_name1").collection("route").document("first_route");//document reference
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>(){
-
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task){
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if(document.exists()){
-                        Log.d("beacon info","documentSnapshot data: "+document.getData());
-                    }
-                    else    Log.d("beacon info","No such documnet");
-                }
-                else    Log.d("beacon info","get failed with ", task.getException());
-            }
-        });
-
-
-
-        db.collection("beacon").document(beacon_name).collection("route")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            for (QueryDocumentSnapshot document : task.getResult()){
-                                Log.d("beacon"," => " + document.getData());//print all path
-                                Current_beacon beacon = document.toObject(Current_beacon.class);
-                                destination.add(beacon.getDestination_name());
-                                //Log.d("beacon", "dest_name = " + beacon.getDestination_name());
-                                Log.d("beacon", "array = " + destination.get(count));
-                                //Log.d("beacon", "inter_path = " + Arrays.toString(beacon.getIntermediate_path()));
-                                count++;
-                                //adapter.notifyDataSetChanged();
-                            }
-                        }
-                        else Log.d("beacon","Error getting documnets: " + task.getException());
-                    }
-                });
-    }*/
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <!--mapping directory="$PROJECT_DIR$" vcs="Git" --/>
+    <!--mapping directory="$PROJECT_DIR$/project2_navigation" vcs="Git" /-->
+
     <mapping directory="$PROJECT_DIR$/project2_navigation" vcs="Git" />
-=======
->>>>>>> e632d7a5a3c9679ebbceaff7ee9d80e9c9edd6f9
   </component>
 </project>

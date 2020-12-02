@@ -3,13 +3,19 @@ package com.example.navigation;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import java.util.Locale;
 
+import java.util.HashMap;
+import java.util.Locale;
+
 public class load_navigation extends AppCompatActivity {
+    TextToSpeech tts;
 
     TextToSpeech tts;//음성출력 객체
 
@@ -35,6 +41,23 @@ public class load_navigation extends AppCompatActivity {
             }
         });
 
+
+//        String speak = beacon.getVoice("start");
+
+        String speak = "안녕하세요.";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
+            ttsGreater21(speak);
+        } else {
+            ttsUnder20(speak);
+        }
+
+ /*       tts.setPitch(1.5f);//tone
+        tts.setSpeechRate(1.0f);//speed
+        tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null,null);//speech*/
+
+        /*Intent intent = getIntent();//receive the beacon_name(UUID)
+        String doc_route = intent.getStringExtra("doc_route");//통신 중인 비콘 UUID 변수
+
         String speak = beacon.getVoice("start");
         tts.setPitch(1.5f);//tone
         tts.setSpeechRate(1.0f);//speed
@@ -57,5 +80,28 @@ public class load_navigation extends AppCompatActivity {
                 else    Log.d("beacon info","get failed with ", task.getException());
             }
         });*/ //intent로 currnet_beacon 객체 못받아올 경우 db 접근 코드
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(tts!=null) {
+            tts.stop();
+            tts.shutdown();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void ttsUnder20(String text) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void ttsGreater21(String text) {
+        String utteranceId=this.hashCode() + "";
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
     }
 }
