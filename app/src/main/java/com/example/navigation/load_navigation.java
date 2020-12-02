@@ -9,18 +9,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.Locale;
 
 import java.util.HashMap;
 import java.util.Locale;
 
 public class load_navigation extends AppCompatActivity {
     TextToSpeech tts;
+
+    TextToSpeech tts;//음성출력 객체
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +58,12 @@ public class load_navigation extends AppCompatActivity {
         /*Intent intent = getIntent();//receive the beacon_name(UUID)
         String doc_route = intent.getStringExtra("doc_route");//통신 중인 비콘 UUID 변수
 
+        String speak = beacon.getVoice("start");
+        tts.setPitch(1.5f);//tone
+        tts.setSpeechRate(1.0f);//speed
+        tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null,null);//speech
 
+        /*String doc_route = intent.getStringExtra("doc_route");//통신 중인 비콘 UUID 변수
         FirebaseFirestore db = FirebaseFirestore.getInstance();//make the firestore instance
 
         DocumentReference docRef = db.collection("Beacon").document("UUID1").collection("Route").document(doc_route);//document reference
@@ -76,7 +79,7 @@ public class load_navigation extends AppCompatActivity {
                 }
                 else    Log.d("beacon info","get failed with ", task.getException());
             }
-        });*/
+        });*/ //intent로 currnet_beacon 객체 못받아올 경우 db 접근 코드
     }
 
     @Override

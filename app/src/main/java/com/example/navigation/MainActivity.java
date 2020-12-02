@@ -302,64 +302,19 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
- //                           Toast.makeText(getApplicationContext(), UUID, Toast.LENGTH_SHORT).show();
                             for (QueryDocumentSnapshot document : task.getResult()){
-                                //beacon_uuid uuid = document.toObject(beacon_uuid.class);
-                                //Log.d("beacon"," => " + uuid.getUUID());//print current beacon UUID
-
                                 //비교 완료한 비콘에 대한 목적지 안내 페이지로 이동 (+해당 비콘의 UUID정보와 함께)
                                 Intent intent = new Intent(MainActivity.this,select_destination.class);
                                 //intent.putExtra("beacon_uuid",uuid.getUUID());//beacon_name 넘겨주기 (string name, UUID)
                                 intent.putExtra("beacon_uuid",document.getId());//beacon_name 넘겨주기 (string name, UUID)
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);//select_destination 페이지로 이동
+                                 startActivity(intent);//select_destination 페이지로 이동
                                 finish();
-//                                res[0] = true;
                             }
                         }
                     }
                 });
-//        return res[0];
     }
-
-
-    /*private void selectDoc(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();//make the firestore instance
-
-        DocumentReference docRef = db.collection("beacon").document("beacon_name1").collection("route").document("first_route");//document reference
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>(){
-
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task){
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if(document.exists()){
-                        Log.d("beacon info","documentSnapshot data: "+document.getData());
-                    }
-                    else    Log.d("beacon info","No such documnet");
-                }
-                else    Log.d("beacon info","get failed with ", task.getException());
-            }
-        });
-
-        db.collection("beacon").document("beacon_name1").collection("route")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            for (QueryDocumentSnapshot document : task.getResult()){
-                                Log.d("beacon"," => " + document.getData());//print all path
-                                Current_beacon beacon = document.toObject(Current_beacon.class);
-                                Log.d("beacon", "dest_name = " + beacon.getDestination_name());
-                                //Log.d("beacon", "inter_path = " + Arrays.toString(beacon.getIntermediate_path()));
-                            }
-                        }
-                        else Log.d("beacon","Error getting documnets: " + task.getException());
-                    }
-                });
-    }*/
-
 }
 
 class beacon_uuid{//DB 비콘 정보 클래스_UUID1 document
