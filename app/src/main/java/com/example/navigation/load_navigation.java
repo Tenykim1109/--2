@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class load_navigation extends AppCompatActivity {
-    TextToSpeech tts;
-
     TextToSpeech tts;//음성출력 객체
 
 

@@ -71,13 +71,13 @@ public class select_destination extends AppCompatActivity {
                                     adapter.notifyDataSetChanged();//update the adapter
                                 }
                             }
-                            else {
-                                Log.d("beacon", "Error getting documnets: " + task.getException());
-/*                            String speak = beacon[0].getVoice("UUID2");
-                            tts.setPitch(1.5f);//tone
-                            tts.setSpeechRate(1.0f);//speed
-                            tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null);//speech*/
-                            }                    
+                            else Log.d("beacon","Error getting documnets: " + task.getException());
+
+                            //String speak = beacon[0].getVoice("UUID2");
+                            //tts.setPitch(1.5f);//tone
+                            //tts.setSpeechRate(1.0f);//speed
+                            //tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null);//speech
+                        }
                     });
 
 
@@ -90,12 +90,9 @@ public class select_destination extends AppCompatActivity {
                             String destination = String.valueOf(parent.getItemAtPosition(i));
                             int obj = 1;
                             for(int j=0; j<beacon.size();j++){
-
-                                if (beacon.get(j).getDest_name() == destination)
+                                if(beacon.get(j).getDest_name() == destination)
                                     obj = j;
                             }
-
-                            
                             Intent intent = new Intent(select_destination.this,load_navigation.class);//목적지 선택 시 arrival_info로 이동
                             //intent.putExtra("doc_route",destination);//목적지
                             intent.putExtra("beacon_obj",beacon.get(obj));

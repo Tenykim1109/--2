@@ -276,6 +276,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
         } else {
             Toast.makeText(getApplicationContext(), "비콘이 감지되지 않았습니다.", Toast.LENGTH_SHORT).show();
         }
+
+        compare_beacon("44604");//비콘없이 다음 페이지로 넘어가는 코드_db 내 존재하는 비콘 uuid값 이용
     }
 
     Handler handler = new Handler() {
