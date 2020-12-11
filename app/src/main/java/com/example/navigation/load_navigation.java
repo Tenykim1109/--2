@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.Locale;
 
 import java.util.HashMap;
@@ -24,7 +26,13 @@ public class load_navigation extends AppCompatActivity {
         setContentView(R.layout.activity_load_navigation);
 
         Intent intent = getIntent();//인식한 비콘에 대한 route 정보담은 객체 받기
-        Current_beacon beacon = (Current_beacon) intent.getSerializableExtra("beacon_obj");
+        Current_beacon beacon = (Current_beacon) intent.getSerializableExtra("beacon_obj");//select_destination에서 수신한 비콘에 대한 정보 받기
+
+        ///////////////////////////
+        //ArrayList<String> inter_path = new ArrayList<String>();
+        //inter_path.addAll(beacon.getInter_path());//beacon이 가진 중간경로 arraylist 복사 -> 이용해서 새로운 beacon 수신 시마다 비교해주면 됨
+        //수신된 beacon의 inter_path 내 minor값을 이용하연 getvoice로 음성안내 가능
+        //beacon.getVoide("inter_path[n]"); n자리에 각 중간 경로 순서 입력
 
         Log.d("beacon_navi", "dest_name = " + beacon.getDest_name());
         Log.d("beacon_navi", "inter_path = " + beacon.getInter_path());

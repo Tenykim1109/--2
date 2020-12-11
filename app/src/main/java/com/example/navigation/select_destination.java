@@ -4,19 +4,24 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -35,6 +40,10 @@ public class select_destination extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_destination);
+
+        FloatingActionButton fab = findViewById(R.id.floatingActionButton);//음성인식 버튼
+        fab.setOnClickListener(new FABClickListener());
+
         Intent intent = getIntent();//receive the beacon_name(UUID)
         final String beacon_uuid = intent.getStringExtra("beacon_uuid");//통신 중인 비콘 UUID 변수
 
@@ -49,7 +58,18 @@ public class select_destination extends AppCompatActivity {
 
         if( beacon_uuid != null){
             ListView listView = (ListView) findViewById(R.id.listView);//listview instance
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>( this, android.R.layout.simple_list_item_1, destination);
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>( this, android.R.layout.simple_list_item_1, destination){
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent){
+                    View view = super.getView(position, convertView, parent);
+                    TextView tv = (TextView) view.findViewById(android.R.id.text1);
+                    tv.setTextColor(Color.WHITE);
+                    tv.setGravity(Gravity.CENTER);
+                    tv.setTextSize(40);
+                    tv.setPadding(0,40,0,40);
+                    return view;
+                }
+            };
             listView.setAdapter(adapter);
 
             //update desination lists
@@ -110,4 +130,12 @@ public class select_destination extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
+    class FABClickListener implements  View.OnClickListener{//음성인식 floating button
+        @Override
+        public void onClick(View view) {//floating button 클릭 시 음성인식 코드
+            Toast.makeText(getApplicationContext(), "음성인식해주세요.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
