@@ -11,9 +11,10 @@ import android.os.RemoteException;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import com.google.firebase.firestore.FirebaseFirestore;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.altbeacon.beacon.Beacon;
@@ -27,10 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+
 public class load_navigation extends AppCompatActivity implements BeaconConsumer{
     TextToSpeech tts;
     private BeaconManager beaconManager;
     private List<Beacon> beaconList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +41,16 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
         setContentView(R.layout.activity_load_navigation);
 
         Intent intent = getIntent();//인식한 비콘에 대한 route 정보담은 객체 받기
-        Current_beacon beacon = (Current_beacon) intent.getSerializableExtra("beacon_obj");
+
+        Current_beacon beacon = (Current_beacon) intent.getSerializableExtra("beacon_obj"); //select_destination에서 수신한 비콘에 대한 정보 받기
         beaconManager = BeaconManager.getInstanceForApplication(this);
+
+
+        ///////////////////////////
+        //ArrayList<String> inter_path = new ArrayList<String>();
+        //inter_path.addAll(beacon.getInter_path());//beacon이 가진 중간경로 arraylist 복사 -> 이용해서 새로운 beacon 수신 시마다 비교해주면 됨
+        //수신된 beacon의 inter_path 내 minor값을 이용하연 getvoice로 음성안내 가능
+        //beacon.getVoide("inter_path[n]"); n자리에 각 중간 경로 순서 입력
 
         Log.d("beacon_navi", "dest_name = " + beacon.getDest_name());
         Log.d("beacon_navi", "inter_path = " + beacon.getInter_path());

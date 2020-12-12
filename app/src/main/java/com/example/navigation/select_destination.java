@@ -10,22 +10,29 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Build;
+
+import android.graphics.Color;
+
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -51,6 +58,10 @@ public class select_destination extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_destination);
+
+        FloatingActionButton fab = findViewById(R.id.floatingActionButton);//음성인식 버튼
+        fab.setOnClickListener(new FABClickListener());
+
         Intent intent = getIntent();//receive the beacon_name(UUID)
         final String beacon_uuid = intent.getStringExtra("beacon_uuid");//통신 중인 비콘 UUID 변수
         dest = "";
@@ -78,7 +89,18 @@ public class select_destination extends AppCompatActivity {
 
         if( beacon_uuid != null){
             ListView listView = (ListView) findViewById(R.id.listView);//listview instance
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>( this, android.R.layout.simple_list_item_1, destination);
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>( this, android.R.layout.simple_list_item_1, destination){
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent){
+                    View view = super.getView(position, convertView, parent);
+                    TextView tv = (TextView) view.findViewById(android.R.id.text1);
+                    tv.setTextColor(Color.WHITE);
+                    tv.setGravity(Gravity.CENTER);
+                    tv.setTextSize(40);
+                    tv.setPadding(0,40,0,40);
+                    return view;
+                }
+            };
             listView.setAdapter(adapter);
 
             //update desination lists
@@ -99,13 +121,13 @@ public class select_destination extends AppCompatActivity {
                                     count++;//total number of path
                                     adapter.notifyDataSetChanged();//update the adapter
                                 }
-                            }
+                            } 
                             else {
-                                Log.d("beacon", "Error getting documnets: " + task.getException());
-/*                            String speak = beacon[0].getVoice("UUID2");
-                            tts.setPitch(1.5f);//tone
-                            tts.setSpeechRate(1.0f);//speed
-                            tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null);//speech*/
+                                Log.d("beacon","Error getting documnets: " + task.getException());
+                                //String speak = beacon[0].getVoice("UUID2");
+                                //tts.setPitch(1.5f);//tone
+                                //tts.setSpeechRate(1.0f);//speed
+                                //tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null);//speech
                             }
                         }
                     });
@@ -292,46 +314,11 @@ public class select_destination extends AppCompatActivity {
         }
     }
 
-    /*private void list_dest( String beacon_name ){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();//make the firestore instance
 
-        DocumentReference docRef = db.collection("beacon").document("beacon_name1").collection("route").document("first_route");//document reference
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>(){
-
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task){
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if(document.exists()){
-                        Log.d("beacon info","documentSnapshot data: "+document.getData());
-                    }
-                    else    Log.d("beacon info","No such documnet");
-                }
-                else    Log.d("beacon info","get failed with ", task.getException());
-            }
-        });
-
-
-
-        db.collection("beacon").document(beacon_name).collection("route")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            for (QueryDocumentSnapshot document : task.getResult()){
-                                Log.d("beacon"," => " + document.getData());//print all path
-                                Current_beacon beacon = document.toObject(Current_beacon.class);
-                                destination.add(beacon.getDestination_name());
-                                //Log.d("beacon", "dest_name = " + beacon.getDestination_name());
-                                Log.d("beacon", "array = " + destination.get(count));
-                                //Log.d("beacon", "inter_path = " + Arrays.toString(beacon.getIntermediate_path()));
-                                count++;
-                                //adapter.notifyDataSetChanged();
-                            }
-                        }
-                        else Log.d("beacon","Error getting documnets: " + task.getException());
-                    }
-                });
-    }*/
+    class FABClickListener implements  View.OnClickListener{//음성인식 floating button
+        @Override
+        public void onClick(View view) {//floating button 클릭 시 음성인식 코드
+            Toast.makeText(getApplicationContext(), "음성인식해주세요.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

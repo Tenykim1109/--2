@@ -11,9 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/colorPrimary"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp"
-        tools:ignore="MissingConstraints">
+        tools:ignore="MissingConstraints"
+        android:gravity="center"
+        >
 
 
         <TextView
@@ -21,15 +24,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="20sp"
-            android:text="비콘 탐색중" />
+            android:textSize="30sp"
+            android:text="비콘 탐색중"
+            android:textColor="@color/colorFont"
+            android:layout_margin="10sp"
+            />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="수신 시 다음 인탠드"
-            android:onClick="Click"/>
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:onClick="Click"
+            app:srcCompat="@drawable/search"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            />
 
 
     </LinearLayout>
