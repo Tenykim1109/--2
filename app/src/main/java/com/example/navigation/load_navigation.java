@@ -69,18 +69,6 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
         TextView tv = (TextView) findViewById(R.id.destText);
         tv.setText(beacon.getDest_name());
 
-        ///////////////////////////
-        //ArrayList<String> inter_path = new ArrayList<String>();
-        //inter_path.addAll(beacon.getInter_path());//beacon이 가진 중간경로 arraylist 복사 -> 이용해서 새로운 beacon 수신 시마다 비교해주면 됨
-        //수신된 beacon의 inter_path 내 minor값을 이용하연 getvoice로 음성안내 가능
-        //beacon.getVoide("inter_path[n]"); n자리에 각 중간 경로 순서 입력
-
-        //목적지 도착 시 도착 안내 페이지로 이동 코드_arrival_info
-        //Intent next_intent = new Intent(load_navigation.this,arrival_info.class);
-        //next_intent.putExtra("destination",beacon.getDest_name());
-        //startActivity(next_intent);
-
-
         Log.d("beacon_navi", "dest_name = " + beacon.getDest_name());
         Log.d("beacon_navi", "inter_path = " + beacon.getInter_path());
         Log.d("beacon_navi", "navigation = " + beacon.getNavigation());
@@ -96,46 +84,6 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
 
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24")); //beacon i4 고유 레이아웃, 비콘마다 레이아웃값 다 다름.
         beaconManager.bind(this); //비콘 탐지 시
-
-
-//        String speak = beacon.getVoice("start");
-
-        /*String speak = "안녕하세요.";
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
-            ttsGreater21(speak);
-        } else {
-            ttsUnder20(speak);
-        }*/
-
- /*       tts.setPitch(1.5f);//tone
-        tts.setSpeechRate(1.0f);//speed
-        tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null,null);//speech*/
-
-        /*Intent intent = getIntent();//receive the beacon_name(UUID)
-        String doc_route = intent.getStringExtra("doc_route");//통신 중인 비콘 UUID 변수
-
-        String speak = beacon.getVoice("start");
-        tts.setPitch(1.5f);//tone
-        tts.setSpeechRate(1.0f);//speed
-        tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null,null);//speech
-
-        /*String doc_route = intent.getStringExtra("doc_route");//통신 중인 비콘 UUID 변수
-        FirebaseFirestore db = FirebaseFirestore.getInstance();//make the firestore instance
-
-        DocumentReference docRef = db.collection("Beacon").document("UUID1").collection("Route").document(doc_route);//document reference
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>(){
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task){
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if(document.exists()){
-                        Log.d("beacon info","documentSnapshot data: "+document.getData());
-                    }
-                    else    Log.d("beacon info","No such documnet");
-                }
-                else    Log.d("beacon info","get failed with ", task.getException());
-            }
-        });*/ //intent로 currnet_beacon 객체 못받아올 경우 db 접근 코드
     }
 
     @Override
@@ -222,9 +170,15 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
         } else if (beacon.getNavigation().get(UUID).contains("우회전") || beacon.getNavigation().get(UUID).contains("우측")) {
             imageView.setImageResource(R.drawable.west);
         } else if(beacon.getNavigation().get(UUID).contains("목적지")) {
+            intent.putExtra("destination",beacon.getDest_name());
             startActivity(intent); //arrival_info 화면으로 이동
         } else {
             imageView.setImageResource(R.drawable.south);
         }
+    }
+
+    public void Click(View v){//경로 안내 중단 버튼
+        Intent intent = new Intent(load_navigation.this,MainActivity.class);//클릭시 비콘 탐색화면으로 이동
+        startActivity(intent);
     }
 }

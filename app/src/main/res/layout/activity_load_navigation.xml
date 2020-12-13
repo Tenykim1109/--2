@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="30sp"
+            android:layout_margin="10sp"
             android:textColor="@color/colorFont"
             android:text="TextView"
             android:textSize="40sp" />
@@ -55,18 +55,19 @@
             android:id="@+id/imageView"
             android:layout_width="350sp"
             android:layout_height="350sp"
-            android:layout_margin="20sp"
+            android:layout_margin="10sp"
             android:layout_gravity="center"
             app:srcCompat="@drawable/east"
             android:scaleType="fitCenter" />
 
         <Button
             android:id="@+id/exitbtn"
-            android:layout_width="140dp"
-            android:layout_height="74dp"
-            android:backgroundTint="#EBEBEB"
+            android:layout_width="150sp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorFont"
             android:text="안내종료"
-            android:textSize="24sp" />
+            android:onClick="Click"
+            android:textSize="30sp" />
 
 
     </LinearLayout>
