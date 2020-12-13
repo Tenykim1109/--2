@@ -15,15 +15,25 @@
         tools:layout_editor_absoluteY="1dp"
         tools:ignore="MissingConstraints"
         android:background="@color/colorPrimary"
-        android:gravity="center"
+        android:gravity="top|center"
         >
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/toDetector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_marginHorizontal="35sp"
+            android:layout_marginTop="25sp"
+            android:clickable="true"
+            app:srcCompat="@android:drawable/ic_menu_camera" />
 
         <TextView
             android:id="@+id/destText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="30sp"
+            android:layout_margin="10sp"
             android:textColor="@color/colorFont"
             android:text="TextView"
             android:textSize="40sp" />
@@ -32,10 +42,20 @@
             android:id="@+id/path_image"
             android:layout_width="350sp"
             android:layout_height="350sp"
-            android:layout_margin="20sp"
+            android:layout_margin="10sp"
             android:layout_gravity="center"
             app:srcCompat="@drawable/east"
             android:scaleType="fitCenter" />
+
+        <Button
+            android:id="@+id/exitbtn"
+            android:layout_width="150sp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorFont"
+            android:text="안내종료"
+            android:onClick="Click"
+            android:textSize="30sp" />
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
