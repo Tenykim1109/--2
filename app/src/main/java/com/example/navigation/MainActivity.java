@@ -21,6 +21,7 @@ import android.speech.tts.TextToSpeech;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
     private List<Beacon> beaconList = new ArrayList<>(); //비콘 목록을 담아둘 리스트
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_BACKGROUND_LOCATION = 2; //비콘 감지를 위해 위치 권한 필요.
+    private static final String app_name = "navigation";
 
 //    @RequiresApi(api = Build.VERSION_CODES.DONUT)
     @Override
@@ -86,8 +88,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
                         != PackageManager.PERMISSION_GRANTED) {
                     if (this.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
                         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle("This app needs background location access");
-                        builder.setMessage("Please grant location access so this app can detect beacons in the background.");
+                        builder.setTitle("백그라운드 위치 권한");
+                        builder.setMessage("이 앱은 비콘을 탐지하기 위해 백그라운드 위치 권한을 필요로 합니다. 계속하시려면 권한을 허가해주세요.");
                         builder.setPositiveButton(android.R.string.ok, null);
                         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 
@@ -103,8 +105,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
                     }
                     else {
                         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle("Functionality limited");
-                        builder.setMessage("Since background location access has not been granted, this app will not be able to discover beacons in the background.  Please go to Settings -> Applications -> Permissions and grant background location access to this app.");
+                        builder.setTitle("기능 제한");
+                        builder.setMessage("백그라운드 위치 권한이 부여되지 않았기 때문에 이 앱은 비콘을 탐지할 수 없습니다. 설정 -> 애플리케이션 -> " + app_name + " -> 권한 탭에서 백그라운드 위치 권한을 설정하시기 바랍니다.");
                         builder.setPositiveButton(android.R.string.ok, null);
                         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 
@@ -125,8 +127,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
                 }
                 else {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Functionality limited");
-                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons.  Please go to Settings -> Applications -> Permissions and grant location access to this app.");
+                    builder.setTitle("기능 제한");
+                    builder.setMessage("백그라운드 위치 권한이 부여되지 않았기 때문에 이 앱은 비콘을 탐지할 수 없습니다. 설정 -> 애플리케이션 -> " + app_name + " -> 권한 탭에서 백그라운드 위치 권한을 설정하시기 바랍니다.");
                     builder.setPositiveButton(android.R.string.ok, null);
                     builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 
@@ -154,8 +156,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
                     Log.d(TAG, "fine location permission granted");
                 } else {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Functionality limited");
-                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons.");
+                    builder.setTitle("기능 제한");
+                    builder.setMessage("백그라운드 위치 권한이 부여되지 않았기 때문에 비콘을 탐지할 수 없습니다.");
                     builder.setPositiveButton(android.R.string.ok, null);
                     builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 
@@ -173,8 +175,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
                     Log.d(TAG, "background location permission granted");
                 } else {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Functionality limited");
-                    builder.setMessage("Since background location access has not been granted, this app will not be able to discover beacons when in the background.");
+                    builder.setTitle("기능 제한");
+                    builder.setMessage("백그라운드 위치 권한이 부여되지 않았기 때문에 이 앱은 비콘을 탐지할 수 없습니다.");
                     builder.setPositiveButton(android.R.string.ok, null);
                     builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
@@ -203,7 +205,11 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        Toast.makeText(getApplicationContext(), "finished!", Toast.LENGTH_SHORT).show();
+        /*if(tts!=null) {
+            tts.stop();
+            tts.shutdown();
+        }*/
+
         try {
             beaconManager.stopRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
             beaconManager.unbind(this);
@@ -215,39 +221,14 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
 
     @Override
     public void onBeaconServiceConnect() {
-        /*beaconManager.setMonitorNotifier(new MonitorNotifier() {
-            @Override
-            public void didEnterRegion(Region region) {
-
-            }
-
-            @Override
-            public void didExitRegion(Region region) {
-
-            }
-
-            @Override
-            public void didDetermineStateForRegion(int i, Region region) {
-
-            }
-        });*/
-
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) { //비콘이 감지되었을때 실행되는 함수
                 if (beacons.size() > 0) {
-//                    compare_beacon(beacons.iterator().next().getId3().toString());
-                    if(beacons.iterator().next().getDistance()>=0.0 && beacons.iterator().next().getDistance()<=1.5) {
-                        compare_beacon(beacons.iterator().next().getId3().toString());
+                    if(beacons.iterator().next().getDistance()>=0.25 && beacons.iterator().next().getDistance()<=2.0) { //비콘 인식 거리는 1미터에서 1.5미터
+                        compare_beacon(beacons.iterator().next().getId3().toString()); //인식한 비콘의 ID와 DB 안의 값을 비교하여 다음 페이지로 넘어감
                     }
                     beaconList.clear();
- /*                   for (Beacon beacon : beacons) {
-//                        beacon.getDistance() >=1.0 &&
-                        if (beacon.getDistance() >=1.0 && beacon.getDistance() <= 1.5) {
-                            beaconList.add(beacon); //리스트에 비콘 목록 추가
-                            compare_beacon(beacon.getId3().toString());//통신 성공한 비콘과 DB 내 비콘 정보 비교
-                        }
-                    }*/
                 }
             }
 
@@ -263,20 +244,21 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
     public void Click(View v){// 비콘 수신 기능 개발 전 다음 페이지로 넘어가기 위한 버튼 (Activity 이동)
         //비콘 수신 기능 구현 시 사용
         Intent intent = new Intent(getApplicationContext(), select_destination.class);
-        String speak = "안녕하세요";
-        tts.setPitch(1.5f);//tone
+        String speak = "목적지를 선택해주세요.";
+
+        /*tts.setPitch(1.5f);//tone
         tts.setSpeechRate(1.0f);//speed
-        tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null, null);//speech
+        tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null, null);//speech*/
 
-        handler.sendEmptyMessage(0); //1초마다 비콘 정보 갱신
-
-        if (beaconList.size()>0) { //비콘이 감지되었을 경우 버튼 누르면 다음 페이지 넘어감.
-            Toast.makeText(getApplicationContext(), "비콘이 감지되었습니다.", Toast.LENGTH_SHORT).show();
-//            startActivity(intent); //select_destination 페이지로 이동
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
+            ttsGreater21(speak);
         } else {
-            Toast.makeText(getApplicationContext(), "비콘이 감지되지 않았습니다.", Toast.LENGTH_SHORT).show();
+            ttsUnder20(speak);
         }
 
+
+        handler.sendEmptyMessage(0); //1초마다 비콘 정보 갱신
+        startActivity(intent);
         compare_beacon("44604");//비콘없이 다음 페이지로 넘어가는 코드_db 내 존재하는 비콘 uuid값 이용
     }
 
@@ -294,11 +276,24 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
         }
     };
 
-    private void compare_beacon(final String UUID){//통신 비콘과 DB 비콘 비교 메소드
-        final boolean[] res = {false};
+    @SuppressWarnings("deprecation")
+    private void ttsUnder20(String text) { //안드로이드 버전 20 이하
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void ttsGreater21(String text) { //안드로이드 버전 21 이상
+        String utteranceId=this.hashCode() + "";
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+    }
+
+    private void compare_beacon(final String UUID){ //통신 비콘과 DB 비콘 비교 메소드
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final String speak = "목적지를 선택해주세요.";
         db.collection("Beacon")
-                .whereEqualTo("UUID", UUID)//UUID1대신 실제 통신한 beacon UUID 입력하여 DB UUID 목록과 비교
+                .whereEqualTo("UUID", UUID) //UUID1대신 실제 통신한 beacon UUID 입력하여 DB UUID 목록과 비교
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -306,11 +301,16 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
                         if(task.isSuccessful()){
                             for (QueryDocumentSnapshot document : task.getResult()){
                                 //비교 완료한 비콘에 대한 목적지 안내 페이지로 이동 (+해당 비콘의 UUID정보와 함께)
-                                Intent intent = new Intent(MainActivity.this,select_destination.class);
+                                Intent intent = new Intent(MainActivity.this, select_destination.class);
                                 //intent.putExtra("beacon_uuid",uuid.getUUID());//beacon_name 넘겨주기 (string name, UUID)
-                                intent.putExtra("beacon_uuid",document.getId());//beacon_name 넘겨주기 (string name, UUID)
+                                intent.putExtra("beacon_uuid", document.getId()); //beacon_name 넘겨주기 (string name, UUID)
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                 startActivity(intent);//select_destination 페이지로 이동
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
+                                    ttsGreater21(speak);
+                                } else {
+                                    ttsUnder20(speak);
+                                }
+                                startActivity(intent); //select_destination 페이지로 이동
                                 finish();
                             }
                         }
