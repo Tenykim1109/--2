@@ -38,7 +38,6 @@ import java.util.Map;
 public class load_navigation extends AppCompatActivity implements BeaconConsumer{
     TextToSpeech tts;
     private BeaconManager beaconManager;
-    private List<Beacon> beaconList;
     Current_beacon beacon;
     ImageView imageView;
 
@@ -61,7 +60,7 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
         });
 
         Intent intent = getIntent(); //인식한 비콘에 대한 route 정보담은 객체 받기
-        imageView = (ImageView)findViewById(R.id.imageView);
+        imageView = (ImageView)findViewById(R.id.path_image);
 
         beacon = (Current_beacon) intent.getSerializableExtra("beacon_obj"); //select_destination에서 수신한 비콘에 대한 정보 받기
         beaconManager = BeaconManager.getInstanceForApplication(this);
@@ -123,14 +122,17 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) { //비콘이 감지되었을때 실행되는 함수
                 if (beacons.size() > 0) {
-                    if(beacons.iterator().next().getDistance()>=1.0 && beacons.iterator().next().getDistance()<=2.5) { //비콘 인식 거리는 1미터에서 1.5미터
+                    if(beacons.iterator().next().getDistance()>=0.25 && beacons.iterator().next().getDistance()<=4.5) { //비콘 인식 거리는 1미터에서 1.5미터
                         Log.d("beacon_uuid", beacons.iterator().next().getId3().toString());
                         load_guide(beacons.iterator().next().getId3().toString(), beacon);
+                        try {
+                            Thread.sleep(3000); // 비콘 중복 인식 방지를 위해 한번 인식했을 경우 3초간 sleep
+                        } catch(InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-//                    beaconList.clear();
                 }
             }
-
         });
 
         try {
@@ -142,43 +144,38 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
 
     private void load_guide(String UUID, Current_beacon beacon) {
         Intent intent = new Intent(load_navigation.this, arrival_info.class);
+        String dest = beacon.getNavigation().get(UUID); // 경로 메시지
         Log.d("beacon_minorID", UUID);
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        /*for (Map.Entry<String, String> entry : beacon.getNavigation().entrySet()) {
-            Log.d("beacon_key", entry.getKey());
-            if (entry.getKey() == UUID) {
-                Log.d("beacon_path", "text: " + beacon.getNavigation().get(UUID));
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ttsGreater21(beacon.getNavigation().get(UUID));
-                }
-                else {
-                    ttsUnder20(beacon.getNavigation().get(UUID));
-                }
-            }
-        }*/
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ttsGreater21(beacon.getNavigation().get(UUID));
-        } else {
-            ttsUnder20(beacon.getNavigation().get(UUID));
-        }
-
-        if (beacon.getNavigation().get(UUID).contains("전진")) {
+        if (dest.contains("전진")) {
+            Log.d("beacon_dest", "1");
             imageView.setImageResource(R.drawable.north);
-        } else if (beacon.getNavigation().get(UUID).contains("좌회전") || beacon.getNavigation().get(UUID).contains("좌측")) {
-            imageView.setImageResource(R.drawable.east);
-        } else if (beacon.getNavigation().get(UUID).contains("우회전") || beacon.getNavigation().get(UUID).contains("우측")) {
+        } else if (dest.contains("좌회전") || beacon.getNavigation().get(UUID).contains("좌측")) {
+            Log.d("beacon_dest", "2");
             imageView.setImageResource(R.drawable.west);
-        } else if(beacon.getNavigation().get(UUID).contains("목적지")) {
+        } else if (dest.contains("우회전") || beacon.getNavigation().get(UUID).contains("우측")) {
+            Log.d("beacon_dest", "3");
+            imageView.setImageResource(R.drawable.east);
+        } else if(dest.contains("목적지")) {
+            Log.d("beacon_dest", "4");
             intent.putExtra("destination",beacon.getDest_name());
             startActivity(intent); //arrival_info 화면으로 이동
         } else {
+            Log.d("beacon_dest", "5");
             imageView.setImageResource(R.drawable.south);
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ttsGreater21(dest);
+        } else {
+            ttsUnder20(dest);
         }
     }
 
     public void Click(View v){//경로 안내 중단 버튼
-        Intent intent = new Intent(load_navigation.this,MainActivity.class);//클릭시 비콘 탐색화면으로 이동
+        String text = "경로 안내를 종료합니다.";
+        Intent intent = new Intent(load_navigation.this, MainActivity.class);//클릭시 비콘 탐색화면으로 이동
+        ttsGreater21(text);
         startActivity(intent);
     }
 }

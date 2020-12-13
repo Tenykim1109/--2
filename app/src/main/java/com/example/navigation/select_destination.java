@@ -135,7 +135,6 @@ public class select_destination extends AppCompatActivity {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
                             //String item = String.valueOf(parent.getItemAtPosition(i));//클릭한 위치의 des values
-                            //Toast.makeText(select_destination.this, item, Toast.LENGTH_SHORT).show();
                             String destination = String.valueOf(parent.getItemAtPosition(i));
                             int obj = 1;
                             for(int j=0; j<beacon.size();j++){
@@ -291,7 +290,6 @@ public class select_destination extends AppCompatActivity {
         @Override
         public void onClick(View view) {//floating button 클릭 시 음성인식 코드
             String text = "목적지를 말씀해주세요.";
-//            Toast.makeText(getApplicationContext(), "음성인식해주세요.", Toast.LENGTH_SHORT).show();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
                 ttsGreater21(text);
