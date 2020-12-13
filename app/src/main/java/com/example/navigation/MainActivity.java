@@ -221,39 +221,14 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
 
     @Override
     public void onBeaconServiceConnect() {
-        /*beaconManager.setMonitorNotifier(new MonitorNotifier() {
-            @Override
-            public void didEnterRegion(Region region) {
-
-            }
-
-            @Override
-            public void didExitRegion(Region region) {
-
-            }
-
-            @Override
-            public void didDetermineStateForRegion(int i, Region region) {
-
-            }
-        });*/
-
         beaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) { //비콘이 감지되었을때 실행되는 함수
                 if (beacons.size() > 0) {
-//                    compare_beacon(beacons.iterator().next().getId3().toString());
-                    if(beacons.iterator().next().getDistance()>=0.0 && beacons.iterator().next().getDistance()<=1.5) { //비콘 인식 거리는 1미터에서 1.5미터
+                    if(beacons.iterator().next().getDistance()>=0.25 && beacons.iterator().next().getDistance()<=2.0) { //비콘 인식 거리는 1미터에서 1.5미터
                         compare_beacon(beacons.iterator().next().getId3().toString()); //인식한 비콘의 ID와 DB 안의 값을 비교하여 다음 페이지로 넘어감
                     }
                     beaconList.clear();
- /*                   for (Beacon beacon : beacons) {
-//                        beacon.getDistance() >=1.0 &&
-                        if (beacon.getDistance() >=1.0 && beacon.getDistance() <= 1.5) {
-                            beaconList.add(beacon); //리스트에 비콘 목록 추가
-                            compare_beacon(beacon.getId3().toString());//통신 성공한 비콘과 DB 내 비콘 정보 비교
-                        }
-                    }*/
                 }
             }
 
@@ -314,11 +289,11 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
     }
 
-    private void compare_beacon(final String UUID){//통신 비콘과 DB 비콘 비교 메소드
+    private void compare_beacon(final String UUID){ //통신 비콘과 DB 비콘 비교 메소드
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         final String speak = "목적지를 선택해주세요.";
         db.collection("Beacon")
-                .whereEqualTo("UUID", UUID)//UUID1대신 실제 통신한 beacon UUID 입력하여 DB UUID 목록과 비교
+                .whereEqualTo("UUID", UUID) //UUID1대신 실제 통신한 beacon UUID 입력하여 DB UUID 목록과 비교
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -328,14 +303,14 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
                                 //비교 완료한 비콘에 대한 목적지 안내 페이지로 이동 (+해당 비콘의 UUID정보와 함께)
                                 Intent intent = new Intent(MainActivity.this, select_destination.class);
                                 //intent.putExtra("beacon_uuid",uuid.getUUID());//beacon_name 넘겨주기 (string name, UUID)
-                                intent.putExtra("beacon_uuid", document.getId());//beacon_name 넘겨주기 (string name, UUID)
+                                intent.putExtra("beacon_uuid", document.getId()); //beacon_name 넘겨주기 (string name, UUID)
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
                                     ttsGreater21(speak);
                                 } else {
                                     ttsUnder20(speak);
                                 }
-                                startActivity(intent);//select_destination 페이지로 이동
+                                startActivity(intent); //select_destination 페이지로 이동
                                 finish();
                             }
                         }

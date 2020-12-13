@@ -50,16 +50,6 @@
             </ListView>
         </ScrollView>
 
-        <Button
-            android:id="@+id/STT"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.75"
-            android:text="음성인식 버튼"
-            android:textColor="#000000"
-            android:textSize="30dp"/>
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floatingActionButton"
             android:layout_width="56dp"

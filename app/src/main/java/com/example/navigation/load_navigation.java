@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.widget.ImageView;
 
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,12 +28,15 @@ import org.altbeacon.beacon.Region;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 public class load_navigation extends AppCompatActivity implements BeaconConsumer{
     TextToSpeech tts;
     private BeaconManager beaconManager;
     private List<Beacon> beaconList;
+    Current_beacon beacon;
+    ImageView imageView;
 
 
     @Override
@@ -40,13 +44,12 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load_navigation);
 
-        Intent intent = getIntent();//인식한 비콘에 대한 route 정보담은 객체 받기
+        Intent intent = getIntent(); //인식한 비콘에 대한 route 정보담은 객체 받기
+        imageView = (ImageView)findViewById(R.id.imageView);
 
-        Current_beacon beacon = (Current_beacon) intent.getSerializableExtra("beacon_obj"); //select_destination에서 수신한 비콘에 대한 정보 받기
+        beacon = (Current_beacon) intent.getSerializableExtra("beacon_obj"); //select_destination에서 수신한 비콘에 대한 정보 받기
         beaconManager = BeaconManager.getInstanceForApplication(this);
 
-
-        ///////////////////////////
         //ArrayList<String> inter_path = new ArrayList<String>();
         //inter_path.addAll(beacon.getInter_path());//beacon이 가진 중간경로 arraylist 복사 -> 이용해서 새로운 beacon 수신 시마다 비교해주면 됨
         //수신된 beacon의 inter_path 내 minor값을 이용하연 getvoice로 음성안내 가능
@@ -129,12 +132,14 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
     private void ttsUnder20(String text) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        tts.setSpeechRate(0.8f);
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void ttsGreater21(String text) {
         String utteranceId=this.hashCode() + "";
+        tts.setSpeechRate(0.85f);
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
     }
 
@@ -144,8 +149,9 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) { //비콘이 감지되었을때 실행되는 함수
                 if (beacons.size() > 0) {
-                    if(beacons.iterator().next().getDistance()>=0.0 && beacons.iterator().next().getDistance()<=1.5) { //비콘 인식 거리는 1미터에서 1.5미터
-                       load_guide(beacons.iterator().next().getId3().toString());
+                    if(beacons.iterator().next().getDistance()>=1.0 && beacons.iterator().next().getDistance()<=2.5) { //비콘 인식 거리는 1미터에서 1.5미터
+                        Log.d("beacon_uuid", beacons.iterator().next().getId3().toString());
+                        load_guide(beacons.iterator().next().getId3().toString(), beacon);
                     }
 //                    beaconList.clear();
                 }
@@ -160,7 +166,39 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
         }
     }
 
-    private void load_guide(String UUID) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void load_guide(String UUID, Current_beacon beacon) {
+        Intent intent = new Intent(load_navigation.this, arrival_info.class);
+        Log.d("beacon_minorID", UUID);
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        /*for (Map.Entry<String, String> entry : beacon.getNavigation().entrySet()) {
+            Log.d("beacon_key", entry.getKey());
+            if (entry.getKey() == UUID) {
+                Log.d("beacon_path", "text: " + beacon.getNavigation().get(UUID));
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ttsGreater21(beacon.getNavigation().get(UUID));
+                }
+                else {
+                    ttsUnder20(beacon.getNavigation().get(UUID));
+                }
+            }
+        }*/
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ttsGreater21(beacon.getNavigation().get(UUID));
+        } else {
+            ttsUnder20(beacon.getNavigation().get(UUID));
+        }
+
+        if (beacon.getNavigation().get(UUID).contains("전진")) {
+            imageView.setImageResource(R.drawable.north);
+        } else if (beacon.getNavigation().get(UUID).contains("좌회전") || beacon.getNavigation().get(UUID).contains("좌측")) {
+            imageView.setImageResource(R.drawable.east);
+        } else if (beacon.getNavigation().get(UUID).contains("우회전") || beacon.getNavigation().get(UUID).contains("우측")) {
+            imageView.setImageResource(R.drawable.west);
+        } else if(beacon.getNavigation().get(UUID).contains("목적지")) {
+            startActivity(intent); //arrival_info 화면으로 이동
+        } else {
+            imageView.setImageResource(R.drawable.south);
+        }
     }
 }

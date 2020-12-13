@@ -47,7 +47,6 @@ public class select_destination extends AppCompatActivity {
     int count = 0;
 
     TextToSpeech tts;//음성출력 객체
-    Button sttButton;
     SpeechRecognizer mRecognizer;
     ToneGenerator mGenerator;
     Intent speachIntent;
@@ -69,8 +68,6 @@ public class select_destination extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO}, PERMISSION);
         }
-
-        sttButton = (Button)findViewById(R.id.STT);
 
         tts = new TextToSpeech(this, new android.speech.tts.TextToSpeech.OnInitListener() {
             @Override
@@ -159,31 +156,6 @@ public class select_destination extends AppCompatActivity {
                     }
 
             );
-
-            final String text = "목적지를 말씀해주세요.";
-
-            sttButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
-                        ttsGreater21(text);
-                    } else {
-                        ttsUnder20(text);
-                    }
-
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    //비프음 후 음성인식
-                    mGenerator.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
-                    mRecognizer = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
-                    mRecognizer.setRecognitionListener(listener);
-                    mRecognizer.startListening(speachIntent);
-                }
-            });
 
         }
 
@@ -318,7 +290,26 @@ public class select_destination extends AppCompatActivity {
     class FABClickListener implements  View.OnClickListener{//음성인식 floating button
         @Override
         public void onClick(View view) {//floating button 클릭 시 음성인식 코드
-            Toast.makeText(getApplicationContext(), "음성인식해주세요.", Toast.LENGTH_SHORT).show();
+            String text = "목적지를 말씀해주세요.";
+//            Toast.makeText(getApplicationContext(), "음성인식해주세요.", Toast.LENGTH_SHORT).show();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
+                ttsGreater21(text);
+            } else {
+                ttsUnder20(text);
+            }
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //비프음 후 음성인식
+            mGenerator.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
+            mRecognizer = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
+            mRecognizer.setRecognitionListener(listener);
+            mRecognizer.startListening(speachIntent);
         }
     }
 }
