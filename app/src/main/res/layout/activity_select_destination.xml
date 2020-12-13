@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="20sp"
+            android:layout_margin="30sp"
             android:text="목적지 선택"
             android:textColor="@color/colorFont"
             android:textSize="30sp" />
