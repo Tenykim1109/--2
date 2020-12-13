@@ -11,6 +11,9 @@ import android.os.RemoteException;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.ImageView;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -50,10 +53,20 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
         beacon = (Current_beacon) intent.getSerializableExtra("beacon_obj"); //select_destination에서 수신한 비콘에 대한 정보 받기
         beaconManager = BeaconManager.getInstanceForApplication(this);
 
+        TextView tv = (TextView) findViewById(R.id.destText);
+        tv.setText(beacon.getDest_name());
+
+        ///////////////////////////
         //ArrayList<String> inter_path = new ArrayList<String>();
         //inter_path.addAll(beacon.getInter_path());//beacon이 가진 중간경로 arraylist 복사 -> 이용해서 새로운 beacon 수신 시마다 비교해주면 됨
         //수신된 beacon의 inter_path 내 minor값을 이용하연 getvoice로 음성안내 가능
         //beacon.getVoide("inter_path[n]"); n자리에 각 중간 경로 순서 입력
+
+        //목적지 도착 시 도착 안내 페이지로 이동 코드_arrival_info
+        //Intent next_intent = new Intent(load_navigation.this,arrival_info.class);
+        //next_intent.putExtra("destination",beacon.getDest_name());
+        //startActivity(next_intent);
+
 
         Log.d("beacon_navi", "dest_name = " + beacon.getDest_name());
         Log.d("beacon_navi", "inter_path = " + beacon.getInter_path());
