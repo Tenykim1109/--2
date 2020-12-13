@@ -28,8 +28,18 @@
         tools:layout_editor_absoluteY="1dp"
         tools:ignore="MissingConstraints"
         android:background="@color/colorPrimary"
-        android:gravity="center"
+        android:gravity="top|center"
         >
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/toDetector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_marginHorizontal="35sp"
+            android:layout_marginTop="25sp"
+            android:clickable="true"
+            app:srcCompat="@android:drawable/ic_menu_camera" />
 
         <TextView
             android:id="@+id/destText"
@@ -49,6 +59,15 @@
             android:layout_gravity="center"
             app:srcCompat="@drawable/east"
             android:scaleType="fitCenter" />
+
+        <Button
+            android:id="@+id/exitbtn"
+            android:layout_width="140dp"
+            android:layout_height="74dp"
+            android:backgroundTint="#EBEBEB"
+            android:text="안내종료"
+            android:textSize="24sp" />
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

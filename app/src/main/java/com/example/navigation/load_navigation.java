@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Collection;
 import java.util.ArrayList;
@@ -46,6 +47,18 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load_navigation);
+
+        //버튼 클릭시 objdetection앱으로 넘어감
+        FloatingActionButton detec_btn;
+
+        detec_btn=findViewById( R.id.toDetector);
+        detec_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=getPackageManager().getLaunchIntentForPackage("com.toure.objectdetection");
+                startActivity(i);
+            }
+        });
 
         Intent intent = getIntent(); //인식한 비콘에 대한 route 정보담은 객체 받기
         imageView = (ImageView)findViewById(R.id.imageView);
