@@ -246,10 +246,6 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
         Intent intent = new Intent(getApplicationContext(), select_destination.class);
         String speak = "목적지를 선택해주세요.";
 
-        /*tts.setPitch(1.5f);//tone
-        tts.setSpeechRate(1.0f);//speed
-        tts.speak(speak,TextToSpeech.QUEUE_FLUSH,null, null);//speech*/
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
             ttsGreater21(speak);
         } else {

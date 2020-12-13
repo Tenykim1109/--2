@@ -38,7 +38,6 @@ import java.util.Map;
 public class load_navigation extends AppCompatActivity implements BeaconConsumer{
     TextToSpeech tts;
     private BeaconManager beaconManager;
-    private List<Beacon> beaconList;
     Current_beacon beacon;
     ImageView imageView;
 
@@ -132,10 +131,8 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
                             e.printStackTrace();
                         }
                     }
-//                    beaconList.clear();
                 }
             }
-
         });
 
         try {

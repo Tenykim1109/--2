@@ -28,6 +28,5 @@ public class arrival_info extends AppCompatActivity {
     public void Click(View v){//경로재탐색 버튼
         Intent intent = new Intent(arrival_info.this,MainActivity.class);//클릭시 MainActivity로 이동
         startActivity(intent);
-
     }
 }
