@@ -44,7 +44,7 @@
             android:layout_height="350sp"
             android:layout_margin="10sp"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/east"
+            app:srcCompat="@drawable/turn_left"
             android:scaleType="fitCenter" />
 
         <Button
@@ -54,7 +54,8 @@
             android:background="@color/colorFont"
             android:text="안내종료"
             android:onClick="Click"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            android:layout_marginTop="20dp"/>
 
 
     </LinearLayout>

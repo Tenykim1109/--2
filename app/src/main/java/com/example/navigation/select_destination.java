@@ -63,6 +63,7 @@ public class select_destination extends AppCompatActivity {
 
         Intent intent = getIntent();//receive the beacon_name(UUID)
         final String beacon_uuid = intent.getStringExtra("beacon_uuid");//통신 중인 비콘 UUID 변수
+//        Log.d("beacon_uuid", beacon_uuid);
         dest = "";
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -145,11 +146,11 @@ public class select_destination extends AppCompatActivity {
                             Intent intent = new Intent(select_destination.this,load_navigation.class);//목적지 선택 시 arrival_info로 이동
                             //intent.putExtra("doc_route",destination);
                             intent.putExtra("beacon_obj",beacon.get(obj));
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
-                                ttsGreater21(destination+"으로 안내합니다.");
+                            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
+                                ttsGreater21(beacon.get(obj).getNavigation().get("start"));
                             } else {
-                                ttsUnder20(destination+"으로 안내합니다.");
-                            }
+                                ttsUnder20(beacon.get(obj).getNavigation().get("start"));
+                            }*/
                             startActivity(intent);
                         }
                     }

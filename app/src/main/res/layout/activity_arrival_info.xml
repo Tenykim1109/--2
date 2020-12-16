@@ -38,7 +38,7 @@
           />
 
         <ImageView
-            android:id="@+id/imageButton2"
+            android:id="@+id/destnation_image"
             android:layout_width="300dp"
             android:layout_height="300dp"
             app:srcCompat="@drawable/research"
