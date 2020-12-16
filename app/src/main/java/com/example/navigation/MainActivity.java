@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) { //비콘이 감지되었을때 실행되는 함수
                 if (beacons.size() > 0) {
-                    if(beacons.iterator().next().getDistance()>=0.25 && beacons.iterator().next().getDistance()<=2.0) { //비콘 인식 거리는 1미터에서 1.5미터
+                    if(beacons.iterator().next().getDistance()>=0.01 && beacons.iterator().next().getDistance()<=5.0) { //비콘 인식 거리는 0.25미터에서 5미터
                         compare_beacon(beacons.iterator().next().getId3().toString()); //인식한 비콘의 ID와 DB 안의 값을 비교하여 다음 페이지로 넘어감
                     }
                     beaconList.clear();
@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
 
         handler.sendEmptyMessage(0); //1초마다 비콘 정보 갱신
         startActivity(intent);
-        compare_beacon("44604");//비콘없이 다음 페이지로 넘어가는 코드_db 내 존재하는 비콘 uuid값 이용
+        compare_beacon("44603");//비콘없이 다음 페이지로 넘어가는 코드_db 내 존재하는 비콘 uuid값 이용
     }
 
     Handler handler = new Handler() {
@@ -300,6 +300,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer{
                                 Intent intent = new Intent(MainActivity.this, select_destination.class);
                                 //intent.putExtra("beacon_uuid",uuid.getUUID());//beacon_name 넘겨주기 (string name, UUID)
                                 intent.putExtra("beacon_uuid", document.getId()); //beacon_name 넘겨주기 (string name, UUID)
+                                Log.d("beacon_document_id", document.getId());
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //안드로이드 빌드버전이 롤리팝(API 21) 이상일 때
                                     ttsGreater21(speak);

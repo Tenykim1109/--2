@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -40,6 +42,7 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
     private BeaconManager beaconManager;
     Current_beacon beacon;
     ImageView imageView;
+    ArrayList<String> beaconList;
 
 
     @Override
@@ -64,6 +67,8 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
 
         beacon = (Current_beacon) intent.getSerializableExtra("beacon_obj"); //select_destination에서 수신한 비콘에 대한 정보 받기
         beaconManager = BeaconManager.getInstanceForApplication(this);
+        beaconList = new ArrayList<>();
+        beaconList.add("");
 
         TextView tv = (TextView) findViewById(R.id.destText);
         tv.setText(beacon.getDest_name());
@@ -88,10 +93,10 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(tts!=null) {
+        /*if(tts!=null) {
             tts.stop();
             tts.shutdown();
-        }
+        }*/
 
         try {
             beaconManager.stopRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
@@ -112,7 +117,7 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void ttsGreater21(String text) {
         String utteranceId=this.hashCode() + "";
-        tts.setSpeechRate(0.85f);
+        tts.setSpeechRate(1.00f);
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
     }
 
@@ -122,13 +127,18 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) { //비콘이 감지되었을때 실행되는 함수
                 if (beacons.size() > 0) {
-                    if(beacons.iterator().next().getDistance()>=0.25 && beacons.iterator().next().getDistance()<=4.5) { //비콘 인식 거리는 1미터에서 1.5미터
-                        Log.d("beacon_uuid", beacons.iterator().next().getId3().toString());
-                        load_guide(beacons.iterator().next().getId3().toString(), beacon);
-                        try {
-                            Thread.sleep(3000); // 비콘 중복 인식 방지를 위해 한번 인식했을 경우 3초간 sleep
-                        } catch(InterruptedException e) {
-                            e.printStackTrace();
+                    if(beacons.iterator().next().getDistance()>=0.01 && beacons.iterator().next().getDistance()<=5.0) { //비콘 인식 거리는 0.25미터에서 5미터
+                        if (beaconList.contains(beacons.iterator().next().getId3().toString())) {
+                            Log.d("beacon_dup", "duplicated");
+                        } else {
+                            Log.d("beacon_uuid", beacons.iterator().next().getId3().toString());
+                            load_guide(beacons.iterator().next().getId3().toString(), beacon);
+                            beaconList.add(beacons.iterator().next().getId3().toString());
+                            try {
+                                Thread.sleep(5000); // 비콘 중복 인식 방지를 위해 한번 인식했을 경우 3초간 sleep
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -146,23 +156,26 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
         Intent intent = new Intent(load_navigation.this, arrival_info.class);
         String dest = beacon.getNavigation().get(UUID); // 경로 메시지
         Log.d("beacon_minorID", UUID);
+        Log.d("beacon_destination", dest);
 
-        if (dest.contains("전진")) {
-            Log.d("beacon_dest", "1");
-            imageView.setImageResource(R.drawable.north);
-        } else if (dest.contains("좌회전") || beacon.getNavigation().get(UUID).contains("좌측")) {
-            Log.d("beacon_dest", "2");
-            imageView.setImageResource(R.drawable.west);
-        } else if (dest.contains("우회전") || beacon.getNavigation().get(UUID).contains("우측")) {
-            Log.d("beacon_dest", "3");
-            imageView.setImageResource(R.drawable.east);
-        } else if(dest.contains("목적지")) {
-            Log.d("beacon_dest", "4");
-            intent.putExtra("destination",beacon.getDest_name());
+        if (dest.contains("우회전") && dest.contains("좌회전")) {
+            imageView.setImageResource(R.drawable.zig_zag);
+        } else if(dest.contains("도착")) {
+            intent.putExtra("destination", beacon.getDest_name());
             startActivity(intent); //arrival_info 화면으로 이동
+            finish();
+        } else if (dest.contains("직진") && dest.contains("좌회전")) {
+            imageView.setImageResource(R.drawable.turn_left);
+        } else if (dest.contains("직진") && beacon.getNavigation().get(UUID).contains("우회전")) {
+            imageView.setImageResource(R.drawable.turn_right);
+        } else if (dest.contains("우회전") || beacon.getNavigation().get(UUID).contains("우측")) {
+            imageView.setImageResource(R.drawable.turn_right);
+        } else if(dest.contains("좌회전") || dest.contains("좌측")) {
+            imageView.setImageResource(R.drawable.turn_left);
+        } else if (dest.contains("전진") || dest.contains("직진")) {
+            imageView.setImageResource(R.drawable.go_straight);
         } else {
-            Log.d("beacon_dest", "5");
-            imageView.setImageResource(R.drawable.south);
+            imageView.setImageResource(R.drawable.go_straight);
         }
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -175,7 +188,12 @@ public class load_navigation extends AppCompatActivity implements BeaconConsumer
     public void Click(View v){//경로 안내 중단 버튼
         String text = "경로 안내를 종료합니다.";
         Intent intent = new Intent(load_navigation.this, MainActivity.class);//클릭시 비콘 탐색화면으로 이동
-        ttsGreater21(text);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ttsGreater21(text);
+        } else {
+            ttsUnder20(text);
+        }
         startActivity(intent);
+        finish();
     }
 }
