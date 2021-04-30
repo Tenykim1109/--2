@@ -37,4 +37,4 @@
 
 [시연 영상] (https://youtu.be/-JpRU5ymZ38)
 
-[주변 혼잡도 인식 기능] (https://github.com/wjdghakswp0866?tab=repositories)
+[주변 혼잡도 인식 기능] (https://github.com/wjdghakswp0866/Pedestrian_Detection_Counting.git)
