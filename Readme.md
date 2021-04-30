@@ -17,6 +17,8 @@
 
 * 목적지까지 경로 안내를 위한 내비게이션 기능
 
+* AI를 이용한 주변 혼잡도 인식 기능
+
 
 ## 2. 개발환경 및 사용 기술
 
@@ -34,3 +36,4 @@
 ## 4. 시연 영상
 
 [시연 영상] (https://youtu.be/-JpRU5ymZ38)
+[주변 혼잡도 인식 기능] (https://github.com/wjdghakswp0866?tab=repositories)
